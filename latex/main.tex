@@ -1,0 +1,117 @@
+\documentclass[a4paper,11pt]{ETHexercise}
+
+\usepackage{etoolbox}
+\newtoggle{publish-notes}
+
+\togglefalse{publish-notes}
+\usepackage{llm}
+\newcommand{\timestamp}{\ddmmyyyydate\today \,\,- \currenttime h}
+
+\usepackage{hyperref}
+
+\newcommand{\solution}[1]{{\color{red}{#1}}}
+\newtoggle{printsolution}
+
+\toggletrue{printsolution}
+\def\vh{{\bm{h}}}
+\newcommand{\wq}{\mW_q}
+\newcommand{\wk}{\mW_k}
+\newcommand{\wv}{\mW_v}
+\newcommand{\wo}{\mW_o}
+\newcommand{\wdd}{\mW_{\text{down}}}
+\newcommand{\wu}{\mW_{\text{up}}}
+\newcommand{\tc}{\text{concat}}
+
+\newcommand{\pk}{\mP_k}
+\newcommand{\pv}{\mP_v}
+\newcommand{\dvh}{\Delta \vh}
+\input{math_commands.tex}
+
+\usepackage{listings}
+\lstset{basicstyle=\small\ttfamily,
+	showstringspaces=false,
+	commentstyle=\color{red},
+	keywordstyle=\color{blue},
+	columns=fullflexible,
+	frame=single,
+}
+\newcommand{\file}[1]{\texttt{\color{blue}#1}}
+\newcommand{\code}[1]{\texttt{\color{purple}#1}}
+\newcommand{\mystring}[1]{{\color{brown}``\texttt{#1}''}}
+\newcommand*{\python}{\texttt{Python}\xspace}
+\newcommand*{\numpy}{\texttt{NumPy}\xspace}
+\newcommand*{\jupyter}{\texttt{Jupyter}\xspace}
+\newcommand*{\pytorch}{\texttt{PyTorch}\xspace}
+\newcommand*{\tensor}{\code{Tensor}\xspace}
+
+\title{Course Assignment 1}
+
+\begin{document}
+\setserie{1}
+
+
+
+\lectureheader{Profs. Mrinmaya Sachan and Florian Tramèr}
+{}
+{\Large Large Language Models}{Spring 2023}
+\begin{center}
+    {\Huge Assignment 2}\\
+      \quad\newline
+    \timestamp
+\end{center}
+
+
+
+
+
+You can obtain at most 100 points in this assignment.
+The grading scheme is the following:
+\begin{center}
+    \begin{tabular}{cc}
+        \toprule
+        Final assignment grade & Total number of points \\
+        \midrule
+        $6.0$ & $ \left[ 96, 100 \right]$ \\
+        $5.75$ & $ \left[ 92, 96 \right)$ \\
+        $5.5$ & $ \left[ 86, 92 \right)$ \\
+        $5.25$ & $ \left[ 82, 86 \right)$ \\
+        $5.0$ & $ \left[ 72, 82 \right)$ \\
+        $4.75$ & $ \left[ 64, 72 \right)$ \\
+        $4.5$ & $ \left[ 58, 64 \right)$ \\
+        $4.25$ & $ \left[ 50, 58 \right)$ \\
+        $4.0$ & $ \left[ 40, 50 \right)$ \\
+        \bottomrule
+    \end{tabular}    
+\end{center}
+
+\textcolor{ETHRed}{\textbf{How to submit}}: You need to submit a single zip file titled \texttt{firstname\_lastname.zip}. The zip file should contain all the required files:
+\begin{enumerate}
+    \item All the contents of the latex folder. You just need to enter solutions to the theoretical questions by filling in the ``solution'' macro after each question.
+    \item For the programming questions, the required files are mentioned in the various questions. 
+\end{enumerate}
+
+
+\newpage{}
+
+\input{questions/question1.tex}
+\newpage{}
+
+\input{questions/question2.tex}
+\newpage{}
+
+\input{questions/question3.tex}
+\newpage{}
+
+\input{questions/question4.tex}
+\newpage{}
+
+\input{questions/question5.tex}
+\newpage{}
+
+
+\bibliographystyle{plain} %
+\bibliography{biblo} %
+
+\appendix
+\input{tutorials.tex}
+\end{document}

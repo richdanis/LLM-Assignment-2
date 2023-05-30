@@ -1,0 +1,121 @@
+@inproceedings{Rahimi2007RFF,
+     author = {Rahimi, Ali and Recht, Benjamin},
+     booktitle = {Advances in Neural Information Processing Systems},
+     editor = {J. Platt and D. Koller and Y. Singer and S. Roweis},
+     pages = {},
+     publisher = {Curran Associates, Inc.},
+     title = {Random Features for Large-Scale Kernel Machines},
+     url = {https://proceedings.neurips.cc/paper/2007/file/013a006f03dbc5392effeb8f18fda755-Paper.pdf},
+     volume = {20},
+     year = {2007}
+}
+
+@misc{hu2021lora,
+    title={LoRA: Low-Rank Adaptation of Large Language Models},
+    author={Hu, Edward and Shen, Yelong and Wallis, Phil and Allen-Zhu, Zeyuan and Li, Yuanzhi and Wang, Lu and Chen, Weizhu},
+    year={2021},
+    eprint={2106.09685},
+    archivePrefix={arXiv},
+    primaryClass={cs.CL}
+}
+
+@inproceedings{DBLP:conf/icml/HoulsbyGJMLGAG19,
+  author       = {Neil Houlsby and
+                  Andrei Giurgiu and
+                  Stanislaw Jastrzebski and
+                  Bruna Morrone and
+                  Quentin de Laroussilhe and
+                  Andrea Gesmundo and
+                  Mona Attariyan and
+                  Sylvain Gelly},
+  title        = {Parameter-Efficient Transfer Learning for {NLP}},
+  booktitle    = {{ICML}},
+  series       = {Proceedings of Machine Learning Research},
+  volume       = {97},
+  pages        = {2790--2799},
+  publisher    = {{PMLR}},
+  year         = {2019}
+}
+
+@misc{kaplan,
+      title={Scaling Laws for Neural Language Models}, 
+      author={Jared Kaplan and Sam McCandlish and Tom Henighan and Tom B. Brown and Benjamin Chess and Rewon Child and Scott Gray and Alec Radford and Jeffrey Wu and Dario Amodei},
+      year={2020},
+      eprint={2001.08361},
+      archivePrefix={arXiv},
+      primaryClass={cs.LG}
+}
+
+@inproceedings{chen-etal-2018-recurrent,
+    title = "Recurrent Neural Networks as Weighted Language Recognizers",
+    author = "Chen, Yining  and
+      Gilroy, Sorcha  and
+      Maletti, Andreas  and
+      May, Jonathan  and
+      Knight, Kevin",
+    booktitle = "Proceedings of the 2018 Conference of the North {A}merican Chapter of the Association for Computational Linguistics: Human Language Technologies, Volume 1 (Long Papers)",
+    month = jun,
+    year = "2018",
+    address = "New Orleans, Louisiana",
+    publisher = "Association for Computational Linguistics",
+    url = "https://aclanthology.org/N18-1205",
+    doi = "10.18653/v1/N18-1205",
+    pages = "2261--2271",
+}
+
+@misc{Du2023, 
+    doi={10.48550/ARXIV.2212.10502},
+    url={https://arxiv.org/abs/2212.10502},
+    author={Du, Li and Hennigen, Lucas Torroba and Pimentel, Tiago and Meister, Clara and Eisner, Jason and Cotterell, Ryan},
+    keywords={Computation and Language (cs.CL), Formal Languages and Automata Theory (cs.FL), FOS: Computer and information sciences, FOS: Computer and information sciences},
+    title={A Measure-Theoretic Characterization of Tight Language Models},
+    publisher={arXiv},
+    year={2022},
+    copyright={Creative Commons Attribution 4.0 International},
+}
+
+@article{hoffmann2022training,
+  title={Training compute-optimal large language models},
+  author={Hoffmann, Jordan and Borgeaud, Sebastian and Mensch, Arthur and Buchatskaya, Elena and Cai, Trevor and Rutherford, Eliza and Casas, Diego de Las and Hendricks, Lisa Anne and Welbl, Johannes and Clark, Aidan and others},
+  journal={arXiv preprint arXiv:2203.15556},
+  year={2022}
+}
+
+@misc{ba2016layer,
+      title={Layer Normalization}, 
+      author={Jimmy Lei Ba and Jamie Ryan Kiros and Geoffrey E. Hinton},
+      year={2016},
+      eprint={1607.06450},
+      archivePrefix={arXiv},
+      primaryClass={stat.ML}
+}
+
+@InProceedings{pmlr-v97-houlsby19a,
+  title = 	 {Parameter-Efficient Transfer Learning for {NLP}},
+  author =       {Houlsby, Neil and Giurgiu, Andrei and Jastrzebski, Stanislaw and Morrone, Bruna and De Laroussilhe, Quentin and Gesmundo, Andrea and Attariyan, Mona and Gelly, Sylvain},
+  booktitle = 	 {Proceedings of the 36th International Conference on Machine Learning},
+  pages = 	 {2790--2799},
+  year = 	 {2019},
+  editor = 	 {Chaudhuri, Kamalika and Salakhutdinov, Ruslan},
+  volume = 	 {97},
+  series = 	 {Proceedings of Machine Learning Research},
+  month = 	 {09--15 Jun},
+  publisher =    {PMLR},
+  pdf = 	 {http://proceedings.mlr.press/v97/houlsby19a/houlsby19a.pdf},
+  url = 	 {https://proceedings.mlr.press/v97/houlsby19a.html},
+}
+
+@inproceedings{li-liang-2021-prefix,
+    title = "Prefix-Tuning: Optimizing Continuous Prompts for Generation",
+    author = "Li, Xiang Lisa  and
+      Liang, Percy",
+    booktitle = "Proceedings of the 59th Annual Meeting of the Association for Computational Linguistics and the 11th International Joint Conference on Natural Language Processing (Volume 1: Long Papers)",
+    month = aug,
+    year = "2021",
+    address = "Online",
+    publisher = "Association for Computational Linguistics",
+    url = "https://aclanthology.org/2021.acl-long.353",
+    doi = "10.18653/v1/2021.acl-long.353",
+    pages = "4582--4597",
+    abstract = "Fine-tuning is the de facto way of leveraging large pretrained language models for downstream tasks. However, fine-tuning modifies all the language model parameters and therefore necessitates storing a full copy for each task. In this paper, we propose prefix-tuning, a lightweight alternative to fine-tuning for natural language generation tasks, which keeps language model parameters frozen and instead optimizes a sequence of continuous task-specific vectors, which we call the prefix. Prefix-tuning draws inspiration from prompting for language models, allowing subsequent tokens to attend to this prefix as if it were {``}virtual tokens{''}. We apply prefix-tuning to GPT-2 for table-to-text generation and to BART for summarization. We show that by learning only 0.1{\%} of the parameters, prefix-tuning obtains comparable performance in the full data setting, outperforms fine-tuning in low-data settings, and extrapolates better to examples with topics that are unseen during training.",
+}

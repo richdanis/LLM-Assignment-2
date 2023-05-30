@@ -1,0 +1,41 @@
+\begin{thebibliography}{1}
+
+\bibitem{ba2016layer}
+Jimmy~Lei Ba, Jamie~Ryan Kiros, and Geoffrey~E. Hinton.
+\newblock Layer normalization, 2016.
+
+\bibitem{hoffmann2022training}
+Jordan Hoffmann, Sebastian Borgeaud, Arthur Mensch, Elena Buchatskaya, Trevor
+  Cai, Eliza Rutherford, Diego de~Las Casas, Lisa~Anne Hendricks, Johannes
+  Welbl, Aidan Clark, et~al.
+\newblock Training compute-optimal large language models.
+\newblock {\em arXiv preprint arXiv:2203.15556}, 2022.
+
+\bibitem{pmlr-v97-houlsby19a}
+Neil Houlsby, Andrei Giurgiu, Stanislaw Jastrzebski, Bruna Morrone, Quentin
+  De~Laroussilhe, Andrea Gesmundo, Mona Attariyan, and Sylvain Gelly.
+\newblock Parameter-efficient transfer learning for {NLP}.
+\newblock In Kamalika Chaudhuri and Ruslan Salakhutdinov, editors, {\em
+  Proceedings of the 36th International Conference on Machine Learning},
+  volume~97 of {\em Proceedings of Machine Learning Research}, pages
+  2790--2799. PMLR, 09--15 Jun 2019.
+
+\bibitem{hu2021lora}
+Edward Hu, Yelong Shen, Phil Wallis, Zeyuan Allen-Zhu, Yuanzhi Li, Lu~Wang, and
+  Weizhu Chen.
+\newblock Lora: Low-rank adaptation of large language models, 2021.
+
+\bibitem{kaplan}
+Jared Kaplan, Sam McCandlish, Tom Henighan, Tom~B. Brown, Benjamin Chess, Rewon
+  Child, Scott Gray, Alec Radford, Jeffrey Wu, and Dario Amodei.
+\newblock Scaling laws for neural language models, 2020.
+
+\bibitem{li-liang-2021-prefix}
+Xiang~Lisa Li and Percy Liang.
+\newblock Prefix-tuning: Optimizing continuous prompts for generation.
+\newblock In {\em Proceedings of the 59th Annual Meeting of the Association for
+  Computational Linguistics and the 11th International Joint Conference on
+  Natural Language Processing (Volume 1: Long Papers)}, pages 4582--4597,
+  Online, August 2021. Association for Computational Linguistics.
+
+\end{thebibliography}

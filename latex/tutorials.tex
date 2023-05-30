@@ -1,0 +1,90 @@
+\section{Using Google Colab}
+
+Here's a simple workflow to get you started with Colab:
+
+\begin{quote}
+\url{https://scribehow.com/shared/Colab_Workflow_Short__-_n5wpWVSOyizxH1i1GxOg}
+\end{quote}
+
+\noindent Colab gives you access to one GPU ``for free'', but depending on your usage and on
+resource availability, the service may decide not to grant you a GPU. We thus recommend
+the following:
+\begin{itemize}
+	\item While you're familiarizing yourself with the codebase, or thinking about how
+	to solve the problems, disconnect the GPU runtime.
+	\item If you do run out of GPU resources on Colab, there is a backup solution
+	using the Euler cluster (see below).
+\end{itemize}
+
+\section{Notebooks, Pytorch, NumPy, GPUs}
+
+If you have any questions or run into any issues, ask us on RocketChat.
+You can also find good explanations for the things you need to know for
+the lab (and a lot more) here:
+\begin{itemize}[leftmargin=1.5em]
+	\item \mbox{\url{https://nbviewer.org/github/cgpotts/cs224u/blob/2020-spring/tutorial_numpy.ipynb}}
+	\item \mbox{\url{https://nbviewer.org/github/cgpotts/cs224u/blob/2020-spring/tutorial_pytorch.ipynb}}
+	\item \mbox{\url{https://nbviewer.org/github/cgpotts/cs224u/blob/2020-spring/tutorial_jupyter_notebooks.ipynb}}
+\end{itemize}
+
+\section{Running Jupyter Notebooks on Euler}
+\label{euler}
+
+If you run out of free GPUs on Colab, there is an option to use a GPU running on the
+Euler cluster as an alternative runtime.
+The process is a bit more involved, and GPU resources on Euler are limited, so please only
+do this if you do run out of Colab's free tier.
+
+\subsection{Launch a Jupyter Notebook from Euler}
+\begin{enumerate}
+	\item Connect to Euler (see \href{https://scicomp.ethz.ch/wiki/Accessing_the_clusters}{instructions}).
+
+	\item download the \file{start\_jupyter.sh} script:
+
+\begin{lstlisting}[language=bash,breaklines=true]
+$ curl -O https://gist.githubusercontent.com/ftramer/b519b4e3d204189b27f94b058a6c4d20/raw/start_jupyter.sh
+\end{lstlisting}
+
+	\item Start a \jupyter notebook server on an Euler node with a GPU:
+
+\begin{lstlisting}[language=bash]
+$ sbatch start_jupyter.sh
+\end{lstlisting}
+
+	This should print out the message: \mystring{Submitted batch job \{JOB\_ID\}}.
+
+	\item You can use the command \texttt{squeue} to check if your job is running.
+	You will also get an email once it starts.
+
+	Once it is running, your job will print out information to two local files,
+	\file{jupyter.out} and \file{jupyter.err}.
+	The file \file{jupyter.out} should contain something like this:
+
+\begin{lstlisting}[basicstyle=\footnotesize\ttfamily]
+ Run the following command on your local machine to enable port forwarding:
+ ssh -N -L 8888:{NODE_IP}:8888 {USER}@login.euler.ethz.ch
+\end{lstlisting}
+
+	\item Run the command in \file{jupyter.out} on your \textbf{local machine}.
+
+\begin{lstlisting}[language=bash]
+$ ssh -N -L 8888:{NODE_IP}:8888 {USER}@login.euler.ethz.ch
+\end{lstlisting}
+
+	\item Now open the file \file{jupyter.err} and copy the URL that is printed at
+	the bottom (this may take a minute to appear).
+	It should look like this:
+
+\begin{lstlisting}
+http://127.0.0.1:8888/lab?token=d70a2ae9...
+\end{lstlisting}
+
+	\item Open this URL in the browser on your local machine.
+	You should now be able to see the \jupyter notebook interface.
+\end{enumerate}
+
+\subsection{Shutting down the Jupyter Notebook}
+
+Run \code{squeue} on Euler to get the JOB\_ID of your job.
+Then run: \code{scancel JOB\_ID}.
+Finally, kill the SSH tunnel on your local machine by pressing \code{Ctrl+C}.
