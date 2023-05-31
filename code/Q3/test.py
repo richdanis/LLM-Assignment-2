@@ -24,8 +24,6 @@ def test(model_name, pre_trained=False):
     answers = []
 
     for qn in tqdm(questions):
-        if (i + 1) % 10 == 0:
-            print("Iteration: ", i + 1)
         answer = sample(model, qn, tokenizer, device, sample_len=100)
         answers.append(answer)
 

@@ -9,7 +9,7 @@
 #SBATCH --gpus=1
 #SBATCH --mail-type=BEGIN
 
-module load gcc/8.2.0 python_gpu/3.10.4 hdf5/1.10.4
+module load gcc/8.2.0 python_gpu/3.10.4 hdf5/1.10.1
 
 NAME=$1
 
