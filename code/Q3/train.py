@@ -13,7 +13,6 @@ def main():
     
     dataset = load_dataset("gsm8k", "main")
     train_dset = GSMDataset(tokenizer, dataset["train"])
-    train_dset = dataset["train"]
 
     device = th.device("cuda")
     model = T5ForConditionalGeneration.from_pretrained("t5-small")

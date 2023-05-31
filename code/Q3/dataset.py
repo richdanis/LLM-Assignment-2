@@ -31,7 +31,7 @@ class GSMDataset(th.utils.data.Dataset):
         self.max_len = 512
 
     def __len__(self):
-        return len(self.examples)
+        return len(self.qns)
 
     def __getitem__(self, idx):
         qn_tokens = self.qns["input_ids"][idx]
