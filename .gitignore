@@ -1,2 +1,4 @@
 .DS_Store
 **/model_ckpts/
+**/models/
+__pycache__/

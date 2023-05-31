@@ -8,21 +8,20 @@ from tqdm.auto import tqdm
 from torch.utils.data import DataLoader
 
 
-def main():
-    tokenizer = AutoTokenizer.from_pretrained("t5-small", model_max_length=512)
+def train(model_name, lr=1e-5, num_epochs=20):
+    tokenizer = AutoTokenizer.from_pretrained(model_name, model_max_length=512)
     
     dataset = load_dataset("gsm8k", "main")
     train_dset = GSMDataset(tokenizer, dataset["train"])
 
     device = th.device("cuda")
-    model = T5ForConditionalGeneration.from_pretrained("t5-small")
+    model = T5ForConditionalGeneration.from_pretrained(model_name)
     model.to(device)
     model.train()
 
     train_loader = DataLoader(train_dset, batch_size=16, shuffle=True)
-    optim = AdamW(model.parameters(), lr=1e-5)
+    optim = AdamW(model.parameters(), lr=lr)
 
-    num_epochs = 20
     num_training_steps = num_epochs * len(train_loader)
     lr_scheduler = get_scheduler(
         "linear",
@@ -44,8 +43,8 @@ def main():
             pbar.update(1)
             pbar.set_description(f"train_loss: {loss.item():.5f}")
 
-    model.save_pretrained("model_ckpts/")
+    model.save_pretrained("models/" + model_name)
 
 
 if __name__ == "__main__":
-    main()
+    train()

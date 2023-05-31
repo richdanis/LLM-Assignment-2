@@ -1,22 +1,37 @@
 import torch as th
-from dataset import get_examples, GSMDataset
+from dataset import extract_answer, GSMDataset, is_correct
 from calculator import sample
 from transformers import AutoTokenizer, T5ForConditionalGeneration
+import pandas as pd
+from datasets import load_dataset
 
 
-def main():
+def test(model_name):
     device = th.device("cuda")
-    tokenizer = AutoTokenizer.from_pretrained("t5-small", model_max_length=512)
-    model = T5ForConditionalGeneration.from_pretrained("model_ckpts")
+    tokenizer = AutoTokenizer.from_pretrained(model_name, model_max_length=512)
+    model = T5ForConditionalGeneration.from_pretrained("models/" + model_name)
     model.to(device)
     print("Model Loaded")
 
-    test_examples = get_examples("test")
-    qn = test_examples[1]["question"]
-    sample_len = 100
-    print(qn.strip())
-    print(sample(model, qn, tokenizer, device, sample_len))
+    dataset = load_dataset("gsm8k", "main")
+    test_samples = dataset["test"][:100]
+    questions = test_samples["question"]
+    answers = []
 
+    for qn in questions:
+        answer = sample(model, qn, tokenizer, device, sample_len=100)
+        answers.append(answer)
+
+    # make dataframe of questions and answers, save to csv
+    df = pd.DataFrame({"question": questions, "answer": answers})
+    df.to_csv("results/" + model_name + ".csv", index=False)
+
+    # calculate accuracy
+    correct = 0
+    for i in range(len(answers)):
+        if is_correct(answers[i], test_samples[i]):
+            correct += 1
+    print("Accuracy: ", correct / len(answers))
 
 if __name__ == "__main__":
-    main()
+    test()
