@@ -6,6 +6,7 @@ import pandas as pd
 from datasets import load_dataset
 from tqdm import tqdm
 import argparse
+import time
 
 
 def test(model_name, pre_trained=False):
@@ -20,12 +21,21 @@ def test(model_name, pre_trained=False):
     print("Model " + model_name + " loaded.")
 
     dataset = load_dataset("gsm8k", "main")
-    questions = dataset["test"]["question"][:100]
+    test_samples = dataset["test"][:100]
+    questions = test_samples["question"]
     answers = []
 
-    for qn in tqdm(questions):
+    start = time.time()
+
+    for i, qn in enumerate(questions):
         answer = sample(model, qn, tokenizer, device, sample_len=100)
         answers.append(answer)
+        if (i + 1) % 5 == 0:
+            print("Iteration " + str(i) + "...")
+            # print time in hours, minutes, seconds
+            print("Time elapsed: ", \
+                  time.strftime("%H:%M:%S", time.gmtime(time.time() - start)))
+        
 
     # make dataframe of questions and answers, save to csv
     df = pd.DataFrame({"question": questions, "answer": answers})
@@ -34,7 +44,7 @@ def test(model_name, pre_trained=False):
     # calculate accuracy
     correct = 0
     for i in range(len(answers)):
-        if is_correct(answers[i], dataset["test"]["answer"][i]):
+        if is_correct(answers[i], dataset["test"][i]):
             correct += 1
 
     print("Accuracy: ", correct / len(answers))

@@ -1,7 +1,7 @@
 #!/bin/bash
 
 #SBATCH -n 4
-#SBATCH --time=4:00:00
+#SBATCH --time=8:00:00
 #SBATCH --mem-per-cpu=5G
 #SBATCH --job-name=jupyter
 #SBATCH --output=/cluster/home/rdanis/%j.out                                                                         
