@@ -1,29 +1,31 @@
 import torch as th
-from dataset import extract_answer, GSMDataset, is_correct
+from dataset import GSMDataset, is_correct
 from calculator import sample
 from transformers import AutoTokenizer, T5ForConditionalGeneration
 import pandas as pd
 from datasets import load_dataset
 from tqdm import tqdm
+import argparse
 
 
-def test(model_name, pretrained=False):
+def test(model_name, pre_trained=False):
     device = th.device("cuda")
     tokenizer = AutoTokenizer.from_pretrained(model_name, model_max_length=512)
     model = None
-    if pretrained:
+    if pre_trained:
         model = T5ForConditionalGeneration.from_pretrained(model_name)
     else:
         model = T5ForConditionalGeneration.from_pretrained("models/" + model_name)
     model.to(device)
-    print("Model Loaded")
+    print("Model " + model_name + " loaded.")
 
     dataset = load_dataset("gsm8k", "main")
-    test_samples = dataset["test"][:100]
-    questions = test_samples["question"]
+    questions = dataset["test"]["question"][:100]
     answers = []
 
     for qn in tqdm(questions):
+        if (i + 1) % 10 == 0:
+            print("Iteration: ", i + 1)
         answer = sample(model, qn, tokenizer, device, sample_len=100)
         answers.append(answer)
 
@@ -34,9 +36,18 @@ def test(model_name, pretrained=False):
     # calculate accuracy
     correct = 0
     for i in range(len(answers)):
-        if is_correct(answers[i], test_samples[i]):
+        if is_correct(answers[i], dataset["test"]["answer"][i]):
             correct += 1
+
     print("Accuracy: ", correct / len(answers))
 
 if __name__ == "__main__":
-    test()
+
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--model_name", type=str)
+    parser.add_argument("--pre_trained", action="store_true")
+    args = parser.parse_args()
+    model_name = args.model_name
+    pre_trained = args.pre_trained
+
+    test(model_name=model_name, pre_trained=pre_trained)
