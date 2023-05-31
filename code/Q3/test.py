@@ -4,12 +4,17 @@ from calculator import sample
 from transformers import AutoTokenizer, T5ForConditionalGeneration
 import pandas as pd
 from datasets import load_dataset
+from tqdm import tqdm
 
 
-def test(model_name):
+def test(model_name, pretrained=False):
     device = th.device("cuda")
     tokenizer = AutoTokenizer.from_pretrained(model_name, model_max_length=512)
-    model = T5ForConditionalGeneration.from_pretrained("models/" + model_name)
+    model = None
+    if pretrained:
+        model = T5ForConditionalGeneration.from_pretrained(model_name)
+    else:
+        model = T5ForConditionalGeneration.from_pretrained("models/" + model_name)
     model.to(device)
     print("Model Loaded")
 
@@ -18,7 +23,7 @@ def test(model_name):
     questions = test_samples["question"]
     answers = []
 
-    for qn in questions:
+    for qn in tqdm(questions):
         answer = sample(model, qn, tokenizer, device, sample_len=100)
         answers.append(answer)
 
