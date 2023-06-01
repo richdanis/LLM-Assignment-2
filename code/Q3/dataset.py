@@ -25,10 +25,19 @@ class GSMDataset(th.utils.data.Dataset):
     def __init__(self, tokenizer, ds, loss_on_prefix=True):
         self.qns = ds['question']
         self.ans = ds['answer']
+        self.qns = [qn + "\n" for qn in self.qns]
+        self.ans = [ans + "<|endoftext|>" for ans in self.ans]
         self.qns = tokenizer(self.qns, padding=False)
         self.ans = tokenizer(self.ans, padding=False)
         self.loss_on_prefix = loss_on_prefix
-        self.max_len = 512
+
+        self.max_len = max(
+            [
+                len(self.qns["input_ids"][i]) + len(self.ans["input_ids"][i])
+                for i in range(len(self.qns["input_ids"]))
+            ]
+        )
+        print(f"Max tokens: {self.max_len}")
 
     def __len__(self):
         return len(self.qns)
