@@ -8,7 +8,7 @@ from tqdm.auto import tqdm
 from torch.utils.data import DataLoader
 
 
-def train(model_name, lr=1e-5, num_epochs=20):
+def train(model_name, lr=1e-5, num_epochs=20, batch_size=8):
     tokenizer = AutoTokenizer.from_pretrained(model_name, model_max_length=512)
     
     dataset = load_dataset("gsm8k", "main")
@@ -19,7 +19,7 @@ def train(model_name, lr=1e-5, num_epochs=20):
     model.to(device)
     model.train()
 
-    train_loader = DataLoader(train_dset, batch_size=16, shuffle=True)
+    train_loader = DataLoader(train_dset, batch_size=batch_size, shuffle=True)
     optim = AdamW(model.parameters(), lr=lr)
 
     num_training_steps = num_epochs * len(train_loader)
