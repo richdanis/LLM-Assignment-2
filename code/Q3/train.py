@@ -43,7 +43,7 @@ def train(model_name, lr=1e-5, num_epochs=3, batch_size=8):
             pbar.update(1)
             pbar.set_description(f"train_loss: {loss.item():.5f}")
 
-    model.save_pretrained("models/" + model_name + "_original")
+    model.save_pretrained("models/" + model_name)
 
 
 if __name__ == "__main__":
