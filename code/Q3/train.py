@@ -35,7 +35,7 @@ def train(model_name, lr=1e-5, num_epochs=20, batch_size=8):
         for batch in train_loader:
             optim.zero_grad()
             batch = {k: v.to(device) for k, v in batch.items()}
-            outputs = model(**batch)
+            outputs = model(**batch, labels=batch["input_ids"])
             loss = outputs[0]
             loss.backward()
             optim.step()
@@ -43,8 +43,8 @@ def train(model_name, lr=1e-5, num_epochs=20, batch_size=8):
             pbar.update(1)
             pbar.set_description(f"train_loss: {loss.item():.5f}")
 
-    model.save_pretrained("models/" + model_name)
+    model.save_pretrained("models/" + model_name + "_original")
 
 
 if __name__ == "__main__":
-    train()
+    train("t5-small")
