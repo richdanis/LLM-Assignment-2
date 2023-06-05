@@ -1,0 +1,7 @@
+Tried so far:
+
+Finetuning: Questions as Input, Answers as Labels: lr=1e-4 epochs=3, acc=0.02
+            Questions as Input, Answers as Labels: lr=1e-4 epochs=8, acc=0.01
+            Questions as Input, Answers as Labels: lr=1e-5 epochs=20, acc=0
+
+Maybe try original method, and care to set tokens to -100 for labels?
