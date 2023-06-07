@@ -15,7 +15,7 @@ NAME=$1
 
 if [ -z "$2" ]
   then
-    python3 /cluster/home/rdanis/LLM-Assignment-2/code/Q3/test.py --model_name $NAME
+    python3 -u /cluster/home/rdanis/LLM-Assignment-2/code/Q3/test.py --model_name $NAME
   else
-    python3 /cluster/home/rdanis/LLM-Assignment-2/code/Q3/test.py --model_name $NAME --pre_trained
+    python3 -u /cluster/home/rdanis/LLM-Assignment-2/code/Q3/test.py --model_name $NAME --pre_trained
 fi

@@ -11,4 +11,4 @@
 
 module load gcc/8.2.0 python_gpu/3.10.4 hdf5/1.10.1
 
-python3 /cluster/home/rdanis/LLM-Assignment-2/code/Q3/train.py
+python3 -u /cluster/home/rdanis/LLM-Assignment-2/code/Q3/train.py
