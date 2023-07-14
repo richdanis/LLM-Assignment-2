@@ -1,20 +1,20 @@
 # Fdb version 3
-["bibtex main"] 1685369734 "main.aux" "main.bbl" "main" 1685373540
+["bibtex main"] 1689348892 "main.aux" "main.bbl" "main" 1689351182
   "/usr/share/texlive/texmf-dist/bibtex/bst/base/plain.bst" 1292289607 20613 bd3fbfa9f64872b81ac57a0dd2ed855f ""
   "biblo.bib" 1685000177 6025 d5ba97562781cde6237dcd714c66ccce ""
-  "main.aux" 1685373538 3816 04a2d7897f1a908c44cfd80f3f9575a0 "pdflatex"
+  "main.aux" 1689351182 3816 04a2d7897f1a908c44cfd80f3f9575a0 "pdflatex"
   (generated)
   "main.bbl"
   "main.blg"
-["makeindex main.idx"] 1685364704 "main.idx" "main.ind" "main" 1685373540
-  "main.idx" 1685373534 0 d41d8cd98f00b204e9800998ecf8427e "pdflatex"
+["makeindex main.idx"] 1689348892 "main.idx" "main.ind" "main" 1689351182
+  "main.idx" 1689351180 0 d41d8cd98f00b204e9800998ecf8427e "pdflatex"
   (generated)
   "main.ilg"
   "main.ind"
-["pdflatex"] 1685373534 "/home/richard/Documents/LLM Assignment 2/main.tex" "main.pdf" "main" 1685373540
-  "/dev/null" 1685340876 0 d41d8cd98f00b204e9800998ecf8427e ""
+["pdflatex"] 1689351179 "/home/richard/Documents/LLM Assignment 2/latex/main.tex" "main.pdf" "main" 1689351182
+  "/dev/null" 1689317276 0 d41d8cd98f00b204e9800998ecf8427e ""
   "/etc/texmf/web2c/texmf.cnf" 1663851316 475 c0e671620eb5563b2130f56340a5fde8 ""
-  "/home/richard/Documents/LLM Assignment 2/main.tex" 1685082008 2966 afec76ee55ad162021ec8aec4d1dc734 ""
+  "/home/richard/Documents/LLM Assignment 2/latex/main.tex" 1689346736 2966 afec76ee55ad162021ec8aec4d1dc734 ""
   "/usr/share/texlive/texmf-dist/fonts/enc/dvips/inconsolata/i4-ot1-0.enc" 1561323594 2496 4d35740f3a177992ff7b134746c0a1db ""
   "/usr/share/texlive/texmf-dist/fonts/enc/dvips/inconsolata/i4-ts1.enc" 1455745497 9446 fe5580ca6042a44427f18d450942e7d0 ""
   "/usr/share/texlive/texmf-dist/fonts/map/fontname/texfonts.map" 1577235249 3524 cb3e574dea2d1052e39280babc910dc8 ""
@@ -346,19 +346,19 @@
   "/usr/share/texmf/fonts/type1/public/cm-super/sfrm1095.pfb" 1663851505 145929 f25e56369a345c4ff583b067cd87ce8e ""
   "/usr/share/texmf/web2c/texmf.cnf" 1644012257 39432 7155514e09a3d69036fac785183a21c2 ""
   "/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map" 1681305818 4271227 d672d4662bed749f7922e92e70a51875 ""
-  "/var/lib/texmf/web2c/pdftex/pdflatex.fmt" 1680338606 1435938 982a19a7026b3194de77f5de4eb573b9 ""
+  "/var/lib/texmf/web2c/pdftex/pdflatex.fmt" 1685515223 1435893 f8247de038c3f346a445c1085a176ead ""
   "ETHexercise.cls" 1685000177 8995 61000088ecdaa8aeec200497b5f48de5 ""
   "ETHheaderpath.tex" 1685000177 31 d8ca25d57e607e150a4c96ade9073ef4 ""
   "ethlogo.pdf" 1684992794 12613 f33514e6c63ac6308c77de3777c74eb1 ""
   "llm.sty" 1685000177 6807 0f6f14bc32c03912edaaa1b53910a17e ""
-  "main.aux" 1685373538 3816 04a2d7897f1a908c44cfd80f3f9575a0 "pdflatex"
-  "main.bbl" 1685369734 1814 1535b33c0b9c02b6f9887c94f3ba2aaa "bibtex main"
-  "main.ind" 1685364705 0 d41d8cd98f00b204e9800998ecf8427e "makeindex main.idx"
-  "main.out" 1685373538 1067 19edbea3c3c7bb0eea08870f3054176b "pdflatex"
-  "main.tex" 1685082008 2966 afec76ee55ad162021ec8aec4d1dc734 ""
+  "main.aux" 1689351182 3816 04a2d7897f1a908c44cfd80f3f9575a0 "pdflatex"
+  "main.bbl" 1689348892 1814 1535b33c0b9c02b6f9887c94f3ba2aaa "bibtex main"
+  "main.ind" 1689348892 0 d41d8cd98f00b204e9800998ecf8427e "makeindex main.idx"
+  "main.out" 1689351182 1067 19edbea3c3c7bb0eea08870f3054176b "pdflatex"
+  "main.tex" 1689346736 2966 afec76ee55ad162021ec8aec4d1dc734 ""
   "math_commands.tex" 1685000177 10700 efffaa225fdd52c515842104e8e40c2f ""
-  "questions/question1.tex" 1685364778 12535 217780e0bd8b74a276ca6f7147186433 ""
-  "questions/question2.tex" 1685373533 5033 5086ee6ffda2e996c0bfb4d2aec787d9 ""
+  "questions/question1.tex" 1689347470 12582 4714f4bb1935c2348529f292aa1d4542 ""
+  "questions/question2.tex" 1689351179 5463 ab301b167feece3bc1dd0d67b332ebd3 ""
   "questions/question3.tex" 1685000177 1590 57fa6bef1c7cc306c4ef63d7ad4a57af ""
   "questions/question4.tex" 1685000177 3050 33f12cc034ce7adda55a1a04c7244bb2 ""
   "questions/question5.tex" 1685000177 2680 840cfdd37c6427d7c97d5ccf867a33a8 ""

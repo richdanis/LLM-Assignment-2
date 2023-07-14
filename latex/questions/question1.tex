@@ -1,0 +1,202 @@
+\begin{question}{
+Parameter-Efficient Transfer Learning [Wangchunshu] \textbf{(20 pts)}}
+
+\paragraph{Background:}
+Transformer models are composed of $L$ stacked blocks, where each block contains two types of sub-layers: multi-head self-attention and a fully connected feed-forward network (FFN).\footnote{In an encoder-decoder architecture, the transformer decoder usually has another multi-head cross-attention module between the self-attention and FFN, which we omit here for simplicity.} 
+The conventional attention function maps queries $\mQ\in \mathbb{R}^{n\times d_k}$ and key-value pairs $\mK \in \mathbb{R}^{m\times d_k}, \mV \in \mathbb{R}^{m\times d_v}$:
+\begin{equation}
+    \mathrm{Attn}(\mQ, \mK, \mV) = \text{softmax}(\frac{\mQ\mK^T}{\sqrt{d_k}})\mV,
+\end{equation}
+where $n$ and $m$ are the number of queries and key-value pairs respectively.
+Multi-head attention performs the attention function in parallel over $N_h$ heads, where each head is separately parameterized by $\mW_q^{(i)}, \mW_k^{(i)}, \mW_v^{(i)} \in \sR^{d\times d_h}$ to project inputs to queries, keys, and values. Given a sequence of $m$ vectors $\mC \in \sR^{m\times d}$ over which we would like to perform attention and a query vector $\vx\in\sR^d$, 
+multi-head attention (MHA) computes the output on each head and concatenates them:\footnote{Below, we sometimes ignore the head index $i$ to simplify notation when there is no confusion.}
+\begin{equation}
+\begin{aligned}
+    \mathrm{MHA}(\mC, \vx) =  \mathrm{Concat(head_1, \cdots, head_h)}\wo, \
+    \mathrm{head_i} = \mathrm{Attn}(\vx\mW_q^{(i)}, \mC\mW_k^{(i)}, \mC\mW_v^{(i)}), 
+    \label{eq:multihead:attn}
+\end{aligned}
+\end{equation}
+where $\wo \in \sR^{d\times d}$.
+$d$ is the model dimension, and 
+in MHA $d_h$ is typically set to $d / N_h$ to save parameters, which indicates that each attention head is operating on a lower-dimensional space. 
+The other important sublayer is the fully connected feed-forward network (FFN) which consists of two linear transformations with a ReLU activation function in between:
+\begin{equation}
+    \mathrm{FFN}(\vx) = \mathrm{ReLU}(\vx\mW_1 +\vb_1)\mW_2 + \vb_2,
+\end{equation}
+where $\mW_1 \in \mathbb{R}^{d\times d_m}$, $\mW_2 \in \sR^{d_m\times d}$. Transformers typically use a large $d_m$, e.g. $d_m=4d$. 
+Finally, a residual connection is used followed by layer normalization~\citep{ba2016layer}.
+
+
+\begin{subquestion}{~\small \textbf{(3 pts)}}
+Describe the architecture of the adapter network described in~\cite{pmlr-v97-houlsby19a} and explain how adapter modules can be added to a pre-trained language model and fine-tuned on downstream tasks. Also, please explain how to calculate the number of trainable parameters when fine-tuning a Transformer encoder (or decoder) with $N$ layers with a hidden dimension of $d$ using adapters of dimension $m$. 
+
+\solution{
+The adapter network consists of a two layer feed forward neural network, with a bottleneck of dimension $m$.
+The input of dimension $d$ is projected down to the bottleneck with the first layer, then a nonlinearity is applied.
+Consecutively the output is projected back to the original dimension with the second layer.
+Further the adapter network features a skip connection, which connects the input to the output.
+With this, the adapter acts approximately as an identity function, when its weights are initialized near zero. 
+
+Adapter modules can be added after each multi-head attention sublayer and feed-forward sublayer in a Transformer model.
+During training for a specific task, only the adapters, layer norm parameters and the parameters of the task-specific layers are updated.
+
+For each of the two layers in the adapter network, we need $m \times d$ parameters for the weights.
+For the biases we need $m$ parameters for the first layer and $d$ parameters for the second layer.
+That makes $2 \times m \times d + m + d$ parameters for each individual adapter.
+Additionally we need $2d$ parameters for each layer norm.
+As there are $2$ adapters and $2$ layer norms per Transformer layer, we have $N \times 2 \times (2 \times m \times d + m + d) + N \times 2 \times 2d = 4 \times N \times m \times d + 2 \times N \times m + 6 \times N \times d$ trainable parameters in total.
+Further there are still some trainable parameters in the task-specific layers. 
+
+
+}
+\end{subquestion}
+
+\begin{subquestion}{~\small \textbf{(3 pts)}}
+Write down the equation of the part where the computation graph is modified by the adapter. (please re-use the notations from the background section whenever possible).
+
+After that, try to convert the equation into the form of:
+\begin{equation}
+\label{eq:adapter}
+    \vh \leftarrow \alpha \vh + \lambda \Delta\vh, 
+\end{equation}
+and identify what $\Delta\vh$ is. Most of the times, $\alpha$ and $\lambda$ are 1 or an independent constant, but when they are not (e.g., there's some relation between them), please specify.
+
+\solution{
+\[
+    \vh \leftarrow \vh + f(\vh \mW_{\text{down}} + \vb_{\text{down}}) \mW_{\text{up}} + \vb_{\text{up}},
+\] 
+where $\mW_{\text{down}} \in \sR^{d\times m}, \mW_{\text{up}} \in \sR^{m\times d}, \vb_{\text{down}} \in \sR^{m}, \vb_{\text{up}} \in \sR^{d}$ and $f$ is a non-linear activation function. 
+Consequently, it follows that, $\Delta \vh = f(\vh \mW_{\text{down}} + \vb_{\text{down}}) \mW_{\text{up}} + \vb_{\text{up}}$.
+}
+\end{subquestion}
+
+
+
+
+\begin{subquestion}{~\small \textbf{(3 pts)}}
+In the class notes, we have an additinal reading on LoRA \citep{hu2021lora}.
+Describe the general idea of LoRA and how LoRA can be added to a pre-trained language model and fine-tuned on downstream tasks. Also, please explain how to calculate the number of trainable parameters when fine-tuning a Transformer encoder (or decoder) with $N$ layers, $H$ attention heads in each layer, and weight matrices  $\wdd \in \sR^{d\times r}$ using LoRA of bottleneck dimension $b$.
+
+\solution{
+For a given pret-trained weight matrix $\mW \in \sR^{d \times k}$, LoRA seeks to approximate the change $\Delta \mW$, which is necessary to adapt the weights to a new task.
+The key idea being, that pre-trained language models have a low "intrinsic dimension" and hence $\Delta \mW$ can be approximated by a low rank decomposition such that $\Delta \mW = BA$, where $B \in \sR^{d \times r}, A \in \sR^{r \times k}$ and $r \ll \min(d, k)$.
+During adaption to a new task, for each weight matrix $\mW$ only $B$ and $A$ are trained.
+In contrast to adapter modules, LoRA does not introduce additional inference overhead, as the learned change $\Delta \mW$ can be applied directly to the pre-trained weights $\mW$.
+
+For the Transformer, LoRA is applied to the matrices $\mW_q, \mW_k, \mW_v \in \sR^{d \times d_h}$ of each attention head and further to $\mW_o \in \sR^{d \times d}$. 
+That means we get $3(d b + b d_h)$ parameters for a single attention head. 
+$\mW_o$ adds a another $2 d b$ parameters per layer.
+Finally, for all $N$ layers and $H$ attention heads per layer, we thus have $N (3 H (d b + b d_h) + 2 db)$ parameters in total.
+TODO: What is meant with $\mW_{\text{down}}$?
+}
+\end{subquestion}
+
+
+
+
+\begin{subquestion}{~\small \textbf{(3 pts)}}
+Write down the equation of the part where the computation graph is modified by LoRA. (please re-use the notations from the background section whenever possible).
+
+After that, try to convert the equation into the form of:
+\begin{equation}
+\label{eq:lora}
+    \vh \leftarrow \alpha \vh + \lambda \Delta\vh,
+\end{equation}
+and identify what $\Delta\vh$ is. Most of the time, $\alpha$ and $\lambda$ are 1 or an independent constant, but when they are not (e.g., there's some relation between them), please specify.
+
+\solution{
+    \[
+        \vh \leftarrow \vh + \frac{\alpha}{r} BA\vx,
+    \] 
+    where $\vh = \mW \vx$, $\mW \in \sR^{d \times k}, B \in \sR^{d \times r}, A \in \sR^{r \times k}$.
+    Consequently, it follows that, $\Delta \vh = BA\vx$ and $\lambda = \frac{\alpha}{r}$.
+}
+\end{subquestion}
+
+
+
+
+\begin{subquestion}{~\small \textbf{(3 pts)}}
+Describe how prefix-tuning can be added to a pre-trained language model and used for fine-tuning on downstream tasks. Also, please explain how to calculate the number of trainable parameters when fine-tuning a Transformer encoder (or decoder) with $N$ layers and $H$ attention heads with dimensionality $d$ using prefix-tuning with $l$ embedding vectors each layer. 
+
+\solution{
+In prefix-tuning, a sequence of continuous task specific vectors is prepended to the input of all transformer blocks.
+During fine-tuning only these vectors are trained and the rest of the pre-trained model is frozen.
+The idea is, that the Transformer can attend to these prefix vectors and use them as context.
+Additionally these embeddings are continuous and do not have to correspond to tokens, so they can be optimized in any direction.
+We will get $N l d$ parameters as only a fixed part of the input of each Transformer block is changed.
+}
+\end{subquestion}
+
+
+
+\begin{subquestion}{~\small \textbf{(2 pts)}}
+In \cite{li-liang-2021-prefix} (see Sec 4.3 of \cite{li-liang-2021-prefix}), the prefix is reparametrized by a smaller matrix composed with an MLP. Assuming the smaller matrix has the same dimensionality as the hidden size of the model, and the MLP has two layers with an intermediate size of $d'$, please again explain how to calculate the number of trainable parameters for the above model.
+
+\solution{
+The MLP takes as input a vector of dimension $N*d_h$ and outputs a vector of dimension of $N*d$.
+Hence we will get two matrices of dimension $d' \times (N * d_h)$ and $(N*d) \times d'$.
+That makes in total $N d' (d_h + d)$ trainable parameters.
+}
+\end{subquestion}
+
+\begin{subquestion}{~\small \textbf{(3 pts)}}
+Please write down the equation of the part where the computation graph is modified by prefix-tuning. (please re-use the notations from the background section whenever possible).
+
+After that, try to convert the equation into the form of:
+\begin{equation}
+\label{eq:prefix}
+    \vh \leftarrow \alpha \vh + \lambda \Delta\vh,
+\end{equation}
+and identify what $\Delta\vh$ is. Most of the time, $\alpha$ and $\lambda$ are 1 or an independent constant, but when they are not (e.g., there's some relation between them), please specify.
+
+Hints:
+\begin{equation}
+\label{eq:prefix-adapter}
+\begin{split}
+& \text{head} = \text{Attn}(\vx\wq, \text{concat}(\pk, \mC\wk), \text{concat}(\pv, \mC\wv)) \\
+& = \text{softmax}\big(\vx\wq\tc(\pk, \mC\wk)^\top\big) \begin{bmatrix} \pv \\ \mC\wv \end{bmatrix} \\
+& = (1 - \lambda(\vx)) \text{softmax}(\vx\wq\wk^\top\mC^\top)\mC\wv + \lambda(\vx)\text{softmax}(x\wq\pk^\top)\pv \\
+& = (1 - \lambda(\vx)) \underbrace{ \text{Attn}(\vx\wq, \mC\wk, \mC\wv) }_{\text{standard attention, h}} + \lambda(\vx) \underbrace{ \text{Attn}(\vx\wq, \pk, \pv) }_{\text{independent of }\mC,\  \Delta h},
+\end{split}
+\end{equation}
+where $\lambda(\vx)$ is a scalar that represents the sum of normalized attention weights on the prefixes.
+
+Please calculate the expression for $\lambda(\vx)$.
+
+\solution{
+\[
+    \vh \leftarrow  \text{Attn}(\vx\wq, \text{concat}(\pk, \mC\wk), \text{concat}(\pv, \mC\wv)),
+\] 
+where $\pk$ are the keys of the prefixes, $\pv$ are the values of the prefixes. 
+
+We can write the softmax as,
+\begin{equation*}
+    \begin{split}
+        a_j = \text{softmax}(\vx\wq\tc(\pk, \mC\wk)^\top)_j &= \frac{\exp\left( \vx\wq \cdot k_j \right)}{\sum_{i} \exp\left(\vx\wq \cdot k_i\right)}  \\
+    \end{split}
+\end{equation*}
+where the $k_j$ are the keys of prefixes and inputs.
+Let $\mathcal{P}$ be the set of indices of the prefixes.
+In order to split the softmax we can transform the $a_j$ as follows,
+\begin{equation*}
+    \begin{split}
+        a_j = 
+        \frac{\sum_{i \in \mathcal{P}} \exp\left(\vx\wq \cdot k_i\right)}{\sum_{i} \exp\left(\vx\wq \cdot k_i\right)}\frac{\exp \left(\vx\mW_q \cdot k_j \right)}{\sum_{i \in \mathcal{P}} \exp\left(\vx\wq \cdot k_i\right)} , \ \text{if } j \in \mathcal{P} \\
+        a_j = 
+        \frac{\sum_{i \notin \mathcal{P}} \exp\left(\vx\wq \cdot k_i\right)}{\sum_{i} \exp\left(\vx\wq \cdot k_i\right)}\frac{\exp \left(\vx\mW_q \cdot k_j \right)}{\sum_{i \notin \mathcal{P}} \exp\left(\vx\wq \cdot k_i\right)} , \ \text{if } j \notin \mathcal{P}.
+    \end{split}
+\end{equation*}
+As each softmax component is multiplied with its corresponding value this gives the desired split with,
+\begin{equation*}
+    \begin{split}
+        \lambda(\vx) = \frac{\sum_{i \in \mathcal{P}} \exp (\vx \wq \cdot k_i)}{\sum_i \exp (\vx\wq \cdot k_i)}.
+    \end{split}
+\end{equation*}
+}
+
+\end{subquestion}
+
+\end{question}
+

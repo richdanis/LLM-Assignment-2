@@ -1,9 +1,9 @@
-PWD /home/richard/Documents/LLM Assignment 2
+PWD /home/richard/Documents/LLM Assignment 2/latex
 INPUT /etc/texmf/web2c/texmf.cnf
 INPUT /usr/share/texmf/web2c/texmf.cnf
 INPUT /usr/share/texlive/texmf-dist/web2c/texmf.cnf
 INPUT /var/lib/texmf/web2c/pdftex/pdflatex.fmt
-INPUT /home/richard/Documents/LLM Assignment 2/main.tex
+INPUT /home/richard/Documents/LLM Assignment 2/latex/main.tex
 OUTPUT main.log
 INPUT ./ETHexercise.cls
 INPUT ./ETHexercise.cls

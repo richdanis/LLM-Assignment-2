@@ -1,0 +1,91 @@
+\begin{question}{Scaling Laws for Language Models  [Alessandro] (15 points)}
+Note: In order to answer this question, please refer to the class notes. You are also allowed to read the scaling laws paper \cite{kaplan} for this question.
+Scaling laws are empirical relationships that describe how certain properties of a system change as a function of its size or scale. In neural language models, scaling laws describe how performance on the cross-entropy loss scales as a power-law with model size, dataset size, and the amount of compute used for training.
+
+
+In particular, the test loss $L$ of a Transformer trained to autoregressively model language can be predicted when performance is limited by only either the number of parameters $N$ or the dataset size $D$ as follows:
+
+\begin{align}
+    \label{powerlaw}
+     L(N) = \frac{A}{N^{\alpha}}\ ;  \hspace{40pt} 
+     L(D) = \frac{B}{D^{\beta}}\ ; 
+\end{align}
+where $A$ and $B$ are some constants. 
+
+\begin{subquestion}{~\small \textbf{(4 pts)}}
+    \label{subq:a}
+    Lets say we want to train a language model. Assume that we are at an optimal point in training. In other words, if we were to increase the dataset size $D$, then the limiting factor would be $N$, and if we were to increase the parameter number $N$ the $D$ would become the bottleneck. We want to further train the model preserving this optimality, how should we increase the two quantities $N$ and $D$ simultaneously? (You can write how $D$ should scale as a function of $N$ or vice versa.)
+
+    \solution{
+        At the optimal point we have $L(N) = L(D)$, i.e. both limit the performance equally.
+        Hence we can solve for $D$,
+        \begin{equation*}
+            \begin{split}
+                \frac{A}{N^{\alpha}} &= \frac{B}{D^{\beta}} \\
+                D^{\beta} &= \frac{B}{A} N^{\alpha} \\
+                D &= \left( \frac{B}{A} \right)^{\frac{1}{\beta}} N^{\frac{\alpha}{\beta}}.
+            \end{split}
+        \end{equation*}
+    }
+\end{subquestion}
+
+
+
+
+\begin{subquestion}{~\small \textbf{(4 pts)}}
+    Given a fixed amount of training compute $C = ND$ (number of FLOPs $\propto$ number of parameters $\times$ number of training steps), now use the result from the previous question to compute the portion of $C$ that you would assign to each of the two factors dataset size and parameter count. (Hint: given $x, y \in [0,1]$ such that $x + y = 1$, $C = C^x C^y $. We would like to know $x$ and $y$, such that $N = C^{x}$ and $D = C^{y}$.)
+
+    \solution{
+        We have two equations,
+        \[ C^x = N \ \text{and} \ C^{1-x} = D = \left( \frac{B}{A} \right)^{\frac{1}{\beta}} N^{\frac{\alpha}{\beta}}. \]
+        Plugging in the first equation into the second one yields,
+        \begin{equation*}
+            \begin{split}
+                C^{1-x} &= \left( \frac{B}{A} \right)^{\frac{1}{\beta}} C^{x\frac{\alpha}{\beta}} \\
+                (1-x) \log C &= \frac{1}{\beta} \log \frac{B}{A} + x \frac{\alpha}{\beta} \log C \\
+                x (\frac{\alpha}{\beta} + 1) \log C &= \log C - \frac{1}{\beta} \log \frac{A}{B} \\
+                x &= \frac{\log C - \frac{1}{\beta} \log \frac{B}{A}}{(\frac{\alpha}{\beta} + 1) \log C}.
+            \end{split}
+        \end{equation*}
+        Hence, $y$ is given by,
+        \[ y = 1 - x = \frac{\frac{\alpha}{\beta} \log C + \frac{1}{\beta} \log \frac{B}{A}}{(\frac{\alpha}{\beta} + 1) \log C}. \]
+    }
+\end{subquestion}
+
+\begin{subquestion}{~\small \textbf{(4 pts)}}
+    A recent study estimated the value of the two coefficients to be $x = 0.46$ and $y = 0.54$ \citep{hoffmann2022training}.
+    Consider a model with 100 billion parameters is trained on a corpus consisting of 300 billion tokens, is the model trained optimally? If not, how would you further train it to reach optimality?\footnote{Our setting introduces multiple additional assumptions compared to the study in Hoffman et al. \cite{hoffmann2022training}, so our results will deviate from the ones presented in the paper.}
+
+    \solution{
+        We can simply plug in the numbers and compute,
+        \begin{equation*}
+            \begin{split}
+                C^{0.46} &= (ND)^{0.46} = 2.19 * 10^{10} \neq N = 100 * 10^9 = 10^{11} \\
+                C^{0.54} &= (ND)^{0.54} = 1.37 * 10^{12} \neq D = 300 * 10^9 = 3 * 10^{11}.
+            \end{split}
+        \end{equation*}
+        Since the numbers do not match, we can conclude that the model is not trained optimally.
+        To reach optimality, we could fix $D$ and then increase $N$ till the equation $(ND)^{0.46} = N$ is satisfied.
+        Precisely we would need to increase $N$ to,
+        \begin{equation*}
+            \begin{split}
+                (ND)^{0.46} &= N \\
+                D^{0.46} &= N^{0.54} \\
+                N &= D^{\frac{0.46}{0.54}} = 128.9 * 10^9.
+            \end{split}
+        \end{equation*}
+    }
+\end{subquestion}
+\begin{subquestion}{~\small \textbf{(3 pts)}}
+    Besides the power-law functional form, what are some other assumptions that we incorporated in Eq. \ref{powerlaw}?
+
+    \solution{
+        We assume that the performance is limited by $N$ and $D$ independently, which may not be the case.
+        The given power laws also imply that the loss will get very small for large $N$ and $D$.
+        But it might be the case that the loss saturates at some point.
+        As mentioned in the lecture, datasets start to suffer in quality when they get very large.
+    }
+    
+\end{subquestion}
+
+\end{question}

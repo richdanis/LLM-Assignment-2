@@ -1,0 +1,39 @@
+\begin{question}{
+Watermarking LLM outputs \textbf{(25 pts)}}
+
+\paragraph{Overview.}
+In this question, you will implement various approaches for watermarking LLM outputs (see the lecture on LLM Security for a short introduction to watermarking).
+
+Specifically, you will implement three watermarking schemes:
+
+\begin{enumerate}
+    \item A dummy scheme that generates text that never contains any letter `e' (lowercase or uppercase).
+    \item A red-list scheme that proceeds as follows: when generating a token from the LLM, use the value of the previously generated token to seed a PRNG, and use this PRNG to randomly split the set of tokens into a ``red list'' and a ``green list''. Then, only output a token from the green list.
+    \item The above scheme can be too strict. E.g., suppose you just generated the token `Barack', and the token `Obama' ends up in the red list. Then your LLM can never generate the string `Barack Obama'. To alleviate this, implement a soft version of the red-list scheme: instead of outright banning the LLM from outputting tokens from the red list, we will simply bias the model against these tokens, by reducing the logit scores of all tokens in the red list by some value $\gamma$.
+\end{enumerate}
+
+For 20 different text prompts that you are given, you should then generate 100 tokens with the LLM using each of these watermarking schemes.
+
+Once you have the watermarking schemes working, think about how you would go about detecting these watermarks.
+
+For this, we will give you 80 pieces of text, that have been generated either with: (1) no watermarking; (2) the dummy ``no e'' watermark; (3) a red list watermark; (4) a soft red list watermark.
+You should then figure out which piece of text was produced with which type of watermarking.
+
+\paragraph{Instructions.}
+You will work with the following
+\href{https://colab.research.google.com/drive/1Bp6C05_6K8fFNiy1goxwtjg76rBcyQRn?usp=sharing}{Google Colab Notebook}.
+
+We will be using the GPT-2 LLM. While this model is a bit dated (and thus does not produce text as fluent as more modern LLMs), it is small enough to run easily on the GPUs you can get for free on Colab!
+
+The Colab Notebook contains all the instructions to get you started.
+In particular, we provide you with a default configuration for text generation, as well as simple PRNG implementation to convert tokens to red lists.
+
+\paragraph{Submission.}
+For this question, you will submit your solutions as two \numpy arrays.
+
+\begin{enumerate}
+    \item \texttt{Q4\_gens.npy}, is an array of $60$ strings that contains your watermarked generations (3 different watermarking schemes applied to 20 different prompts).
+    \item \texttt{Q4\_guesses.npy}, is an array of integers of size $80$ that contains your guess of which watermarking scheme was used for each of the 80 provided text pieces (1 = no watermarking; 2 = the dummy ``no e'' watermark; 3 = a red list watermark; 4 = a soft red list watermark). \textbf{(each of the 4 options was used exactly 20 times).}
+\end{enumerate}
+
+\end{question}
