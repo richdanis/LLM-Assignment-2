@@ -48,33 +48,34 @@ def sample(model, qn, tokenizer, device, sample_len):
     EQUALS_TOKENS = set([28, 796, 47505])
 
     toks = tokenizer([qn], padding=False, return_tensors="pt").to(device)
-    ans = None
-    out = None
 
-    for _ in range(sample_len):
+    decoder_input_ids = [model.config.decoder_start_token_id]
+    predicted_ids = []
+
+    for i in range(sample_len):
         with th.no_grad():
 
-            if ans is None:
-                out = model.generate(
-                    **toks, max_length=1, pad_token_id=model.config.eos_token_id
-                )
-            else:
-                # get decoder input ids from ans
-                dec_inputs = tokenizer([ans], padding=False, return_tensors="pt").to(device)["input_ids"]
-                # pass dec_inputs as decoder input
-                out = model.generate(
-                    **toks,
-                    max_length=1,
-                    pad_token_id=model.config.eos_token_id,
-                    decoder_input_ids=dec_inputs,
-                )
-            text = tokenizer.batch_decode(out)[0]
+            outputs = model(input_ids=toks.input_ids, decoder_input_ids=th.tensor([decoder_input_ids]).to(device))
+            logits = outputs.logits[:,i,:]
+            # perform argmax on the last dimension (i.e. greedy decoding)
+            predicted_id = logits.argmax(-1)
+            predicted_ids.append(predicted_id.item())
+            # add predicted id to decoder_input_ids
+            decoder_input_ids = decoder_input_ids + [predicted_id]
+            # stop if EOS token is predicted
+            if predicted_id == tokenizer.eos_token_id:
+                break
 
-            if out[0, -1].item() in EQUALS_TOKENS:
+            text = tokenizer.decode(predicted_ids, skip_special_tokens=False)
+
+            if predicted_id.item() in EQUALS_TOKENS:
                 answer = use_calculator(text)
                 if answer is not None:
                     print("Triggered calculator, answer", answer)
                     text = text + str(answer) + ">>"
 
-            ans = text
-    return qn
+            predicted_ids = tokenizer.encode(text, add_special_tokens=True)
+
+    ans = tokenizer.decode(predicted_ids, skip_special_tokens=True)
+
+    return ans
