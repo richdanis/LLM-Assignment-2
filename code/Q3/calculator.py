@@ -47,14 +47,27 @@ def sample(model, qn, tokenizer, device, sample_len):
     # cache activations from previous tokens
     EQUALS_TOKENS = set([28, 796, 47505])
 
+    toks = tokenizer([qn], padding=False, return_tensors="pt").to(device)
+    ans = None
+    out = None
+
     for _ in range(sample_len):
         with th.no_grad():
-            toks = tokenizer([qn], padding=False, return_tensors="pt").to(device)
-            orig_len = toks["input_ids"].shape[1]
 
-            out = model.generate(
-                **toks, max_length=orig_len + 1, pad_token_id=model.config.eos_token_id
-            )
+            if ans is None:
+                out = model.generate(
+                    **toks, max_length=1, pad_token_id=model.config.eos_token_id
+                )
+            else:
+                # get decoder input ids from ans
+                dec_inputs = tokenizer([ans], padding=False, return_tensors="pt").to(device)["input_ids"]
+                # pass dec_inputs as decoder input
+                out = model.generate(
+                    **toks,
+                    max_length=1,
+                    pad_token_id=model.config.eos_token_id,
+                    decoder_input_ids=dec_inputs,
+                )
             text = tokenizer.batch_decode(out)[0]
 
             if out[0, -1].item() in EQUALS_TOKENS:
@@ -63,5 +76,5 @@ def sample(model, qn, tokenizer, device, sample_len):
                     print("Triggered calculator, answer", answer)
                     text = text + str(answer) + ">>"
 
-            qn = text
+            ans = text
     return qn
