@@ -8,7 +8,7 @@ from tqdm.auto import tqdm
 from torch.utils.data import DataLoader
 
 
-def train(model_name, lr=3e-4, num_epochs=10, batch_size=8):
+def train(model_name, lr=1e-4, num_epochs=3, batch_size=8):
     tokenizer = AutoTokenizer.from_pretrained(model_name, model_max_length=512)
     
     dataset = load_dataset("gsm8k", "main")
