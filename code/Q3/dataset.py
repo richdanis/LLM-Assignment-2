@@ -14,45 +14,34 @@ def extract_answer(completion):
     else:
         return INVALID_ANS
 
+
 def is_correct(model_completion, gt_example):
     gt_answer = extract_answer(gt_example["answer"])
     assert gt_answer != INVALID_ANS
     return extract_answer(model_completion) == gt_answer
 
+
 class GSMDataset(th.utils.data.Dataset):
-    def __init__(self, tokenizer, ds, loss_on_prefix=True):
+    def __init__(self, tokenizer, ds):
         self.qns = ds['question']
         self.ans = ds['answer']
-        self.qns = [qn + "\n" for qn in self.qns]
-        self.len = len(self.qns)
-        self.qns = tokenizer(self.qns, padding=False)
+        self.qns = [qn for qn in self.qns]
+        self.ans = [ans for ans in self.ans]
+        self.qns = tokenizer(self.qns, padding='longest', return_tensors="pt")
         self.ans = tokenizer(self.ans, padding=False)
-        self.loss_on_prefix = loss_on_prefix
-
-        self.max_len = max(
-            [
-                len(self.qns["input_ids"][i]) + len(self.ans["input_ids"][i])
-                for i in range(len(self.qns["input_ids"]))
-            ]
-        )
-        print(f"Max tokens: {self.max_len}")
+        self.a_max_len = max([len(an) for an in self.ans["input_ids"]])
 
     def __len__(self):
-        return self.len
+        return len(self.qns["input_ids"])
 
     def __getitem__(self, idx):
-        qn_tokens = self.qns["input_ids"][idx]
-        ans_tokens = self.ans["input_ids"][idx]
-        pad_tokens = [0] * (self.max_len - len(qn_tokens) - len(ans_tokens))
-        tokens = qn_tokens + ans_tokens + pad_tokens
-        mask = (
-            ([int(self.loss_on_prefix)] * len(qn_tokens))
-            + ([1] * len(ans_tokens))
-            + ([0] * len(pad_tokens))
-        )
-        labels = tokens.copy()
-        labels = [-100 if x == 0 else x for x in labels]
-        tokens = th.tensor(tokens)
-        mask = th.tensor(mask)
+
+        # important, padding is not ignored for labels, -100 is the ignore index
+        padding = [-100] * (self.a_max_len - len(self.ans["input_ids"][idx]))
+        labels = self.ans["input_ids"][idx] + padding
+
         labels = th.tensor(labels)
-        return dict(input_ids=tokens, attention_mask=mask, labels=labels)
+
+        return dict(input_ids=self.qns["input_ids"][idx], \
+                     attention_mask=self.qns["attention_mask"][idx], \
+                        labels=labels)
