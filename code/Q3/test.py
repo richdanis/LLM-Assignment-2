@@ -28,13 +28,7 @@ def test(model_name, pre_trained=False):
     start = time.time()
 
     for i, qn in enumerate(questions):
-        #answer = sample(model, qn, tokenizer, device, sample_len=100)
-        #answers.append(answer)
-        #if (i + 1) % 5 == 0:
-            #print("Iteration " + str(i) + "...")
-            # print time in hours, minutes, seconds
-            #print("Time elapsed: ", \
-            #      time.strftime("%H:%M:%S", time.gmtime(time.time() - start)))
+        
         input_ids = tokenizer(qn, return_tensors="pt").input_ids.to(device)
         outputs = model.generate(input_ids, max_new_tokens=256)
         answers.append(tokenizer.decode(outputs[0], skip_special_tokens=True))
