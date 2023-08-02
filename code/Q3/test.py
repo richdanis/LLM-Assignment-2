@@ -1,6 +1,5 @@
 import torch as th
 from dataset import GSMDataset, is_correct
-from calculator import sample
 from transformers import AutoTokenizer, T5ForConditionalGeneration
 import pandas as pd
 from datasets import load_dataset
@@ -27,7 +26,7 @@ def test(model_name, pre_trained=False):
 
     start = time.time()
 
-    for i, qn in enumerate(questions):
+    for i, qn in enumerate(tqdm(questions)):
         
         input_ids = tokenizer(qn, return_tensors="pt").input_ids.to(device)
         outputs = model.generate(input_ids, max_new_tokens=256)
