@@ -43,9 +43,9 @@ During training for a specific task, only the adapters, layer norm parameters an
 
 For each of the two layers in the adapter network, we need $m \times d$ parameters for the weights.
 For the biases we need $m$ parameters for the first layer and $d$ parameters for the second layer.
-That makes $2 \times m \times d + m + d$ parameters for each individual adapter.
+That makes $2  m d + m + d$ parameters for each individual adapter.
 Additionally we need $2d$ parameters for each layer norm.
-As there are $2$ adapters and $2$ layer norms per Transformer layer, we have $N \times 2 \times (2 \times m \times d + m + d) + N \times 2 \times 2d = 4 \times N \times m \times d + 2 \times N \times m + 6 \times N \times d$ trainable parameters in total.
+As there are $2$ adapters and $2$ layer norms per Transformer layer, we have $2N (2  m d + m + d) + 2 N \times 2d = 4 N m d + 2 N m + 6 N d$ trainable parameters in total.
 Further there are still some trainable parameters in the task-specific layers. 
 
 
@@ -63,6 +63,8 @@ After that, try to convert the equation into the form of:
 and identify what $\Delta\vh$ is. Most of the times, $\alpha$ and $\lambda$ are 1 or an independent constant, but when they are not (e.g., there's some relation between them), please specify.
 
 \solution{
+    The adapters are inserted after each multi-head attention sublayer and feed-forward sublayer in a Transformer model.
+    Given the output $\vh$ of a sublayer, the adapter computes,
 \[
     \vh \leftarrow \vh + f(\vh \mW_{\text{down}} + \vb_{\text{down}}) \mW_{\text{up}} + \vb_{\text{up}},
 \] 
@@ -79,16 +81,15 @@ In the class notes, we have an additinal reading on LoRA \citep{hu2021lora}.
 Describe the general idea of LoRA and how LoRA can be added to a pre-trained language model and fine-tuned on downstream tasks. Also, please explain how to calculate the number of trainable parameters when fine-tuning a Transformer encoder (or decoder) with $N$ layers, $H$ attention heads in each layer, and weight matrices  $\wdd \in \sR^{d\times r}$ using LoRA of bottleneck dimension $b$.
 
 \solution{
-For a given pret-trained weight matrix $\mW \in \sR^{d \times k}$, LoRA seeks to approximate the change $\Delta \mW$, which is necessary to adapt the weights to a new task.
+For a given pre-trained weight matrix $\mW \in \sR^{d \times k}$, LoRA seeks to approximate the change $\Delta \mW$, which is necessary to adapt the weights to a new task.
 The key idea being, that pre-trained language models have a low "intrinsic dimension" and hence $\Delta \mW$ can be approximated by a low rank decomposition such that $\Delta \mW = BA$, where $B \in \sR^{d \times r}, A \in \sR^{r \times k}$ and $r \ll \min(d, k)$.
 During adaption to a new task, for each weight matrix $\mW$ only $B$ and $A$ are trained.
 In contrast to adapter modules, LoRA does not introduce additional inference overhead, as the learned change $\Delta \mW$ can be applied directly to the pre-trained weights $\mW$.
 
 For the Transformer, LoRA is applied to the matrices $\mW_q, \mW_k, \mW_v \in \sR^{d \times d_h}$ of each attention head and further to $\mW_o \in \sR^{d \times d}$. 
-That means we get $3(d b + b d_h)$ parameters for a single attention head. 
-$\mW_o$ adds a another $2 d b$ parameters per layer.
-Finally, for all $N$ layers and $H$ attention heads per layer, we thus have $N (3 H (d b + b d_h) + 2 db)$ parameters in total.
-TODO: What is meant with $\mW_{\text{down}}$?
+That means we get $3(d r + r d_h)$ parameters for a single attention head. 
+$\mW_o$ adds a another $2 d r$ parameters per layer.
+Finally, for all $N$ layers and $H$ attention heads per layer, we thus have $N (3 H (d r + r d_h) + 2 dr)$ parameters in total.
 }
 \end{subquestion}
 
@@ -106,11 +107,12 @@ After that, try to convert the equation into the form of:
 and identify what $\Delta\vh$ is. Most of the time, $\alpha$ and $\lambda$ are 1 or an independent constant, but when they are not (e.g., there's some relation between them), please specify.
 
 \solution{
+    Given an input $\vx \in \sR^d$ and a weight matrix $\mW \in \sR^{d \times k}$, LoRA modifies the computation graph as follows,
     \[
-        \vh \leftarrow \vh + \frac{\alpha}{r} BA\vx,
+        \vh \leftarrow \vh + \frac{\alpha}{r} \vx BA,
     \] 
-    where $\vh = \mW \vx$, $\mW \in \sR^{d \times k}, B \in \sR^{d \times r}, A \in \sR^{r \times k}$.
-    Consequently, it follows that, $\Delta \vh = BA\vx$ and $\lambda = \frac{\alpha}{r}$.
+    where $\vh = \vx\mW$, $B \in \sR^{d \times r}, A \in \sR^{r \times k}$.
+    Consequently, it follows that, $\Delta \vh = \vx BA$ and $\lambda = \frac{\alpha}{r}$.
 }
 \end{subquestion}
 
@@ -124,8 +126,8 @@ Describe how prefix-tuning can be added to a pre-trained language model and used
 In prefix-tuning, a sequence of continuous task specific vectors is prepended to the input of all transformer blocks.
 During fine-tuning only these vectors are trained and the rest of the pre-trained model is frozen.
 The idea is, that the Transformer can attend to these prefix vectors and use them as context.
-Additionally these embeddings are continuous and do not have to correspond to tokens, so they can be optimized in any direction.
-We will get $N l d$ parameters as only a fixed part of the input of each Transformer block is changed.
+These embeddings are continuous and do not have to correspond to tokens, so gradient descent can be used to update them during fine-tuning.
+We will get $N l d$ trainable parameters as only a fixed part of the input of each Transformer block is changed.
 }
 \end{subquestion}
 
@@ -137,7 +139,8 @@ In \cite{li-liang-2021-prefix} (see Sec 4.3 of \cite{li-liang-2021-prefix}), the
 \solution{
 The MLP takes as input a vector of dimension $N*d_h$ and outputs a vector of dimension of $N*d$.
 Hence we will get two matrices of dimension $d' \times (N * d_h)$ and $(N*d) \times d'$.
-That makes in total $N d' (d_h + d)$ trainable parameters.
+Further we have to account for the parameters of the smaller matrix, which is of size $l \times d_h$.
+That makes in total $N d' (d_h + d) + l d_h$ trainable parameters.
 }
 \end{subquestion}
 
