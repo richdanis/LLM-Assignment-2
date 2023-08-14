@@ -45,7 +45,8 @@ For each of the two layers in the adapter network, we need $m \times d$ paramete
 For the biases we need $m$ parameters for the first layer and $d$ parameters for the second layer.
 That makes $2  m d + m + d$ parameters for each individual adapter.
 Additionally we need $2d$ parameters for each layer norm.
-As there are $2$ adapters and $2$ layer norms per Transformer layer, we have $2N (2  m d + m + d) + 2 N \times 2d = 4 N m d + 2 N m + 6 N d$ trainable parameters in total.
+As there are $2$ adapters and $2$ layer norms per Transformer layer, we have 
+\[ 2N (2  m d + m + d) + 2 N \times 2d = 4 N m d + 2 N m + 6 N d \] trainable parameters in total.
 Further there are still some trainable parameters in the task-specific layers. 
 
 
@@ -86,10 +87,12 @@ The key idea being, that pre-trained language models have a low "intrinsic dimen
 During adaption to a new task, for each weight matrix $\mW$ only $B$ and $A$ are trained.
 In contrast to adapter modules, LoRA does not introduce additional inference overhead, as the learned change $\Delta \mW$ can be applied directly to the pre-trained weights $\mW$.
 
-For the Transformer, LoRA is applied to the matrices $\mW_q, \mW_k, \mW_v \in \sR^{d \times d_h}$ of each attention head and further to $\mW_o \in \sR^{d \times d}$. 
+In the paper, LoRA is applied to the matrices $\mW_q, \mW_k, \mW_v \in \sR^{d \times d_h}$ of each attention head and further to $\mW_o \in \sR^{d \times d}$. 
 That means we get $3(d r + r d_h)$ parameters for a single attention head. 
 $\mW_o$ adds a another $2 d r$ parameters per layer.
-Finally, for all $N$ layers and $H$ attention heads per layer, we thus have $N (3 H (d r + r d_h) + 2 dr)$ parameters in total.
+Finally, for all $N$ layers and $H$ attention heads per layer, we thus have 
+\[ N (3 H (d r + r d_h) + 2 dr) \] 
+trainable parameters in total.
 }
 \end{subquestion}
 
@@ -137,10 +140,13 @@ We will get $N l d$ trainable parameters as only a fixed part of the input of ea
 In \cite{li-liang-2021-prefix} (see Sec 4.3 of \cite{li-liang-2021-prefix}), the prefix is reparametrized by a smaller matrix composed with an MLP. Assuming the smaller matrix has the same dimensionality as the hidden size of the model, and the MLP has two layers with an intermediate size of $d'$, please again explain how to calculate the number of trainable parameters for the above model.
 
 \solution{
-The MLP takes as input a vector of dimension $N*d_h$ and outputs a vector of dimension of $N*d$.
-Hence we will get two matrices of dimension $d' \times (N * d_h)$ and $(N*d) \times d'$.
-Further we have to account for the parameters of the smaller matrix, which is of size $l \times d_h$.
-That makes in total $N d' (d_h + d) + l d_h$ trainable parameters.
+The MLP takes as input a vector of dimension $d$ and outputs a vector of dimension of $N*d$.
+Hence we will get two matrices of dimension $d \times d'$ and $d' \times (N * d)$.
+Additionally we have to account for the bias parameters, which are of size $d'$ and $N*d$ respectively.
+Further we have to account for the parameters of the smaller matrix, which is of size $l \times d$.
+That makes in total 
+\[ dd' + d'Nd + d' + Nd + ld \] 
+trainable parameters.
 }
 \end{subquestion}
 

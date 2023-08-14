@@ -60,18 +60,19 @@ where $A$ and $B$ are some constants.
         We can simply plug in the numbers and compute,
         \begin{equation*}
             \begin{split}
-                C^{0.46} &= (ND)^{0.46} = 2.19 * 10^{10} > N = 100 * 10^9 = 10^{11} \\
-                C^{0.54} &= (ND)^{0.54} = 1.37 * 10^{12} < D = 300 * 10^9 = 3 * 10^{11}.
+                C^{0.46} &= (ND)^{0.46} = 2.19 * 10^{10} < N = 100 * 10^9 = 10^{11} \\
+                C^{0.54} &= (ND)^{0.54} = 1.37 * 10^{12} > D = 300 * 10^9 = 3 * 10^{11}.
             \end{split}
         \end{equation*}
         Since the numbers do not match, we can conclude that the model is not trained optimally.
-        To reach optimality, we could fix $D$ and then decrease $N$ till the equation $(ND)^{0.46} = N$ is satisfied.
+        Considering that increasing the amount of compute $C$ is not always possible, we could fix $D$ and then decrease $N$ till the equation $(ND)^{0.46} = N$ is satisfied.
+        Then the training would be optimal.
         Precisely we would need to decrease $N$ to,
         \begin{equation*}
             \begin{split}
-                (ND)^{0.46} &= N \\
-                D^{0.46} &= N^{0.54} \\
-                N &= D^{\frac{0.46}{0.54}} = 5.98 * 10^9.
+                (N_{\text{opt}}D)^{0.46} &= N_{\text{opt}} \\
+                D^{0.46} &= N_{\text{opt}}^{0.54} \\
+                N_{\text{opt}} &= D^{\frac{0.46}{0.54}} = 5.98 * 10^9.
             \end{split}
         \end{equation*}
     }
@@ -80,12 +81,16 @@ where $A$ and $B$ are some constants.
     Besides the power-law functional form, what are some other assumptions that we incorporated in Eq. \ref{powerlaw}?
 
     \solution{
-        We assume that the performance is limited by $N$ and $D$ independently, which may not be the case.
-        The given power laws also imply that the loss will get very small for large $N$ and $D$.
-        But it might be the case that the loss saturates at some point.
-        As mentioned in the lecture, datasets start to suffer in quality when they get very large.
-        Further the loss depends on training time as well, which naturally grows with bigger datasets and more parameters.
-        But this quantity is not considered in the given power laws.
+        \begin{itemize}
+            \item We assume that the performance is limited by $N$ and $D$ independently, which may not be the case.
+            \item The given power laws also imply that the loss will get very small for large $N$ and $D$.
+            But it might be the case that the loss saturates at some point.
+            As mentioned in the lecture, datasets start to suffer in quality when they get very large.
+            \item The loss depends on training time as well, which naturally grows with bigger datasets and more parameters.
+            This quantity is not considered in the given power laws.
+            \item There is no distinction between different types of parameters, i.e. embedding parameters and model parameters. Although they might impact the loss differently.
+        \end{itemize}
+        
     }
     
 \end{subquestion}
